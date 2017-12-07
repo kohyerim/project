@@ -1,6 +1,7 @@
 import pygame
 import random
 from Image import Image
+from Fish import Fish
 
 pygame.display.init()
 pygame.init()
@@ -133,18 +134,29 @@ class Screen:
         finish = False
         penguin_x = 200
         penguin_y = 200
+        fish_list = []
+        fish_rect_list = []
+        count = random.randint(10, 15)
+        for i in range(0, count):
+            fish = Fish(self.screen, self.food_animate(self.fish_frame), random.randint(0, 300), random.randint(50, 500), self.fish_frame)
+            fish_list.append(fish)
+            fish_rect_list.append(fish)
+
         while not finish:
-            fish = self.food_animate(self.fish_frame)
             penguin = pygame.transform.flip(self.penguin_move_frame[0], True, False)
             self.screen.blit(self.food_background, (0, 0))
-            self.screen.blit(fish, (100, 100))
             penguin_rect = self.screen.blit(penguin, (penguin_x, penguin_y))
             back_button_rect = self.screen.blit(self.back_button, (20, 20))
             self.text("FOOD", FONT, (0, 0, 0), self.width/2, self.height/4)
 
+            for fish in fish_list:
+                rect = fish.move()
+                fish_rect_list.pop(0)
+                fish_rect_list.append(rect)
+
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_UP]:
-                if -10 < penguin_y:
+                if -20 < penguin_y:
                     penguin_y -= 3
             if pressed[pygame.K_DOWN]:
                 if penguin_y < 600 - 48:
@@ -162,6 +174,12 @@ class Screen:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if back_button_rect.collidepoint(event.pos):
                         finish = True
+
+            for fish in fish_rect_list:
+                if penguin_rect.colliderect(fish):
+                    self.score += 5
+                    print(self.score)
+
             pygame.display.update()
 
     def enemy(self):
