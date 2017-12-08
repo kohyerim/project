@@ -203,7 +203,6 @@ class Screen:
 
     def enemy(self):
         finish = False
-        self.heart -= 1
         penguin = pygame.transform.flip(self.penguin_move_frame[0], True, False)
         penguin_x = 280
         penguin_y = self.height/2
@@ -234,6 +233,7 @@ class Screen:
     def choice(self, num):
         if num >= 8:
             self.enemy()
+            self.heart -= 1
         else:
             self.food()
 
